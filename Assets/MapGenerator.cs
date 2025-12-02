@@ -53,29 +53,29 @@ public class MapGenerator : MonoBehaviour
 			}
 		}
 		
-		EnforceMinimumDistance(4);
+		//EnforceMinimumDistance(4);
 		
-		RemoveArticulationBridges();
+		//RemoveArticulationBridges();
 
 		// --- PHASE 2: Remove protrusions ---
-		RemoveProtrusions();
+		//RemoveProtrusions();
 
-		RemoveIslandCollisions();
+		//RemoveIslandCollisions();
 
 		// --- PHASE 3: Paint tiles with padding ---
 		tilemap.ClearAllTiles();
 
 		// ---- Add null padding around edges ----
-		for (int x = -1; x <= width; x++)
-		{
-			tilemap.SetTile(new Vector3Int(x, -1, 0), null);
-			tilemap.SetTile(new Vector3Int(x, height, 0), null);
-		}
-		for (int y = -1; y <= height; y++)
-		{
-			tilemap.SetTile(new Vector3Int(-1, y, 0), null);
-			tilemap.SetTile(new Vector3Int(width, y, 0), null);
-		}
+		// for (int x = -1; x <= width; x++)
+		// {
+			// tilemap.SetTile(new Vector3Int(x, -1, 0), null);
+			// tilemap.SetTile(new Vector3Int(x, height, 0), null);
+		// }
+		// for (int y = -1; y <= height; y++)
+		// {
+			// tilemap.SetTile(new Vector3Int(-1, y, 0), null);
+			// tilemap.SetTile(new Vector3Int(width, y, 0), null);
+		// }
 
 		// ---- Paint internal map ----
 		for (int x = 0; x < width; x++)
@@ -87,7 +87,9 @@ public class MapGenerator : MonoBehaviour
 			}
 		}
 		
-		RemoveProtrusions();
+		PrintMap();
+		
+		//RemoveProtrusions();
 		
 		// Paint deep water tiles on all remaining null tiles
         for (int x = 0; x < width; x++)
@@ -104,7 +106,7 @@ public class MapGenerator : MonoBehaviour
 
 		PrintMap();
 		
-		PrintSprites();
+		//PrintSprites();
 	}
 	
 	void EnforceMinimumDistance(int minDistance)
