@@ -5,9 +5,12 @@ using System.Collections.Generic;
 public class MapGenerator : MonoBehaviour
 {
     [Header("Tilemap Settings")]
-    public Tilemap tilemap;
+    public Tilemap waterTilemap;
+	public Tilemap grassTilemap;
+	public Tilemap foamTilemap;
     public RuleTile grassCliffTile;
 	public RuleTile deepWaterTile;
+    public AnimatedTile animatedWaterTile;
 
     [Header("Map Settings")]
     public int width = 50;
@@ -63,7 +66,7 @@ public class MapGenerator : MonoBehaviour
 		//RemoveIslandCollisions();
 
 		// --- PHASE 3: Paint tiles with padding ---
-		tilemap.ClearAllTiles();
+		//tilemap.ClearAllTiles();
 
 		// ---- Add null padding around edges ----
 		// for (int x = -1; x <= width; x++)
@@ -78,12 +81,24 @@ public class MapGenerator : MonoBehaviour
 		// }
 
 		// ---- Paint internal map ----
+		
+		// Paint  water tiles on all tiles
 		for (int x = 0; x < width; x++)
 		{
 			for (int y = 0; y < height; y++)
 			{
 				Vector3Int pos = new Vector3Int(x, y, 0);
-				tilemap.SetTile(pos, landMap[x, y] ? grassCliffTile : null);
+
+				bool isLand = landMap[x, y];
+				waterTilemap.SetTile(pos, deepWaterTile);
+				if (isLand)
+				{
+					// Paint land tile
+					grassTilemap.SetTile(pos, grassCliffTile);
+
+					// Replace water tile with animated water tile at intersection
+					foamTilemap.SetTile(pos, animatedWaterTile);
+				}
 			}
 		}
 		
@@ -91,18 +106,7 @@ public class MapGenerator : MonoBehaviour
 		
 		//RemoveProtrusions();
 		
-		// Paint deep water tiles on all remaining null tiles
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-                if (tilemap.GetTile(pos) == null)
-                    tilemap.SetTile(pos, deepWaterTile);
-            }
-        }
-		
-		tilemap.RefreshAllTiles();
+		grassTilemap.RefreshAllTiles();
 
 		PrintMap();
 		
@@ -528,7 +532,7 @@ public class MapGenerator : MonoBehaviour
             {
                 Vector3Int pos = new Vector3Int(x, y, 0);
 
-                Sprite sprite = tilemap.GetSprite(pos);
+                Sprite sprite = grassTilemap.GetSprite(pos);
 
                 // Skip empty tiles
                 if (sprite == null)
