@@ -7,9 +7,11 @@ public class MapGenerator : MonoBehaviour
     [Header("Tilemap Settings")]
     public Tilemap waterTilemap;
 	public Tilemap grassTilemap;
+	public Tilemap grassOrder1Tilemap;
 	public Tilemap foamTilemap;
-    public RuleTile grassCliffTile;
-	public RuleTile deepWaterTile;
+    public RuleTile grassTile;
+	public RuleTile grassCliffTile;
+	public RuleTile waterTile;
     public AnimatedTile animatedWaterTile;
 
     [Header("Map Settings")]
@@ -90,25 +92,50 @@ public class MapGenerator : MonoBehaviour
 				Vector3Int pos = new Vector3Int(x, y, 0);
 
 				bool isLand = landMap[x, y];
-				waterTilemap.SetTile(pos, deepWaterTile);
+				waterTilemap.SetTile(pos, waterTile);
 				if (isLand)
 				{
 					// Paint land tile
-					grassTilemap.SetTile(pos, grassCliffTile);
+					grassTilemap.SetTile(pos, grassTile);
 
 					// Replace water tile with animated water tile at intersection
 					foamTilemap.SetTile(pos, animatedWaterTile);
 				}
 			}
 		}
+			
+		var islands = FindIslands(landMap);
+
+		int i = 0;
+		foreach (var island in islands)
+		{
+			// string result = $"Island {i}:\n";
+
+			// foreach (var cell in island)
+			// {
+				// result += $"({cell.x}, {cell.y}), ";
+			// }
+
+			// Debug.Log(result);
+			// i++;
+			List<List<Vector3Int>> regions = SplitIslandIntoRegions(island, 150); 
+			foreach (var cell in regions[0])
+			{
+				grassOrder1Tilemap.SetTile(cell, grassCliffTile);
+				Vector3Int pos = new Vector3Int(cell.x, cell.y, 0);
+				foamTilemap.SetTile(pos, animatedWaterTile);
+			}
+			//PaintRegions(grassOrder1Tilemap, regions[0]);
+		}
+
 		
-		PrintMap();
+		//PrintMap();
 		
 		//RemoveProtrusions();
 		
 		grassTilemap.RefreshAllTiles();
 
-		PrintMap();
+		//PrintMap();
 		
 		//PrintSprites();
 	}
@@ -556,4 +583,111 @@ public class MapGenerator : MonoBehaviour
 		}
 		Debug.Log(mapString);
 	}
+	
+	List<List<Vector3Int>> FindIslands(bool[,] landMap)
+	{
+		int width = landMap.GetLength(0);
+		int height = landMap.GetLength(1);
+		bool[,] visited = new bool[width, height];
+
+		List<List<Vector3Int>> islands = new List<List<Vector3Int>>();
+
+		int[] dx = { 1, -1, 0, 0 };
+		int[] dy = { 0, 0, 1, -1 };
+
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				if (!landMap[x, y] || visited[x, y]) continue;
+
+				// Start BFS for a new island
+				List<Vector3Int> island = new List<Vector3Int>();
+				Queue<Vector2Int> q = new Queue<Vector2Int>();
+				q.Enqueue(new Vector2Int(x, y));
+				visited[x, y] = true;
+
+				while (q.Count > 0)
+				{
+					Vector2Int p = q.Dequeue();
+					island.Add(new Vector3Int(p.x, p.y, 0));
+
+					for (int i = 0; i < 4; i++)
+					{
+						int nx = p.x + dx[i];
+						int ny = p.y + dy[i];
+
+						if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+						if (!landMap[nx, ny] || visited[nx, ny]) continue;
+
+						visited[nx, ny] = true;
+						q.Enqueue(new Vector2Int(nx, ny));
+					}
+				}
+
+				islands.Add(island);
+			}
+		}
+
+		return islands;
+	}
+	
+	List<List<Vector3Int>> SplitIslandIntoRegions(List<Vector3Int> islandTiles, int maxSize)
+	{
+		HashSet<Vector3Int> unassigned = new HashSet<Vector3Int>(islandTiles);
+		List<List<Vector3Int>> regions = new List<List<Vector3Int>>();
+
+		int[] dx = { 1, -1, 0, 0 };
+		int[] dy = { 0, 0, 1, -1 };
+
+		while (unassigned.Count > 0)
+		{
+			// Start a new region from any unassigned tile
+			Vector3Int start = unassigned.GetEnumerator().Current;
+			foreach (var t in unassigned) { start = t; break; }
+
+			Queue<Vector3Int> q = new Queue<Vector3Int>();
+			List<Vector3Int> region = new List<Vector3Int>();
+
+			q.Enqueue(start);
+			unassigned.Remove(start);
+
+			while (q.Count > 0 && region.Count < maxSize)
+			{
+				var p = q.Dequeue();
+				region.Add(p);
+
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3Int np = new Vector3Int(p.x + dx[i], p.y + dy[i], 0);
+
+					if (unassigned.Contains(np))
+					{
+						q.Enqueue(np);
+						unassigned.Remove(np);
+					}
+				}
+			}
+
+			regions.Add(region);
+		}
+
+		return regions;
+	}
+	
+	void PaintRegions(Tilemap regionTilemap, List<List<Vector3Int>> regions)
+	{
+		int tileIndex = 0;
+
+		foreach (var region in regions)
+		{
+			foreach (var cell in region)
+			{
+				regionTilemap.SetTile(cell, grassCliffTile);
+			}
+
+			tileIndex++;
+		}
+	}
+
 }
