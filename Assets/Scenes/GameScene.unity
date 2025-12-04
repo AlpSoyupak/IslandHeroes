@@ -626,7 +626,7 @@ MonoBehaviour:
   grassOrder1Tilemap: {fileID: 1571302654}
   foamTilemap: {fileID: 1796863582}
   grassTile: {fileID: 11400000, guid: 9599cb5c314e97046a32964629cddbfd, type: 2}
-  grassCliffTile: {fileID: 11400000, guid: 3196dba808d9e56499eecbc34497d580, type: 2}
+  grassCliffTile: {fileID: 11400000, guid: 0a494bc02ca852b459f04854c3e3be53, type: 2}
   waterTile: {fileID: 11400000, guid: 07cc055b858724243a7a220e94a5f8ef, type: 2}
   animatedWaterTile: {fileID: 11400000, guid: b21a72b97e57142468dcead8880a8018, type: 2}
   width: 50
