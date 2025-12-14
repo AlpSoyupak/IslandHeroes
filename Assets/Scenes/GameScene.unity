@@ -521,7 +521,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcfce8b38998c043910e6d73739087b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  speed: 10
+  moveSpeed: 10
+  zoomSpeed: 5
+  minZoom: 3
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,8 +645,8 @@ MonoBehaviour:
   grassCliffTile: {fileID: 11400000, guid: 0a494bc02ca852b459f04854c3e3be53, type: 2}
   waterTile: {fileID: 11400000, guid: 07cc055b858724243a7a220e94a5f8ef, type: 2}
   animatedWaterTile: {fileID: 11400000, guid: b21a72b97e57142468dcead8880a8018, type: 2}
-  width: 50
-  height: 50
+  width: 200
+  height: 200
   noiseScale: 0.08
   threshold: 0.52
   seed: 0
@@ -1038,6 +1040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa8563ee0a2cc6144ac6165f51ab7894, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  speed: 3
 --- !u!1001 &7723762157302727066
 PrefabInstance:
   m_ObjectHideFlags: 0
