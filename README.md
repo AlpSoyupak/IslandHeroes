@@ -6,4 +6,7 @@ around the map by clicking on any map location.
 
 (The value of **X** is defined as an input parameter on the **MapGenerator** object Inspector view on Unity)
 
-It is only needed to checkout the repository using git, load the project using Unity, then press play.
+It is only needed to 
+(1)checkout the repository using git, 
+(2)load the project using Unity, 
+(3)then press play.
