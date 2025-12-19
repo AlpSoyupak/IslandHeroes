@@ -61,12 +61,14 @@ public class FreeCamera2D : MonoBehaviour
     void HandleZoom()
     {
         float scroll = Mouse.current?.scroll.ReadValue().y ?? 0f;
+        float zoomFactor = 0.1f;
+        targetZoom *= 1f - scroll * zoomFactor;
         if (Mathf.Abs(scroll) < 0.01f) return;
 
-        targetZoom -= scroll * zoomSpeed * Time.deltaTime;
+        targetZoom *= 1f - scroll * 0.1f;
+
         targetZoom = Mathf.Max(minZoom, targetZoom);
 
-        //Clamp zoom to map bounds BEFORE applying
         Bounds b = tilemap.localBounds;
         float maxZoomH = b.size.y / 2f;
         float maxZoomW = b.size.x / (2f * cam.aspect);
@@ -74,11 +76,7 @@ public class FreeCamera2D : MonoBehaviour
 
         targetZoom = Mathf.Min(targetZoom, safeMaxZoom);
 
-        cam.orthographicSize = Mathf.Lerp(
-            cam.orthographicSize,
-            targetZoom,
-            Time.deltaTime * 10f
-        );
+        cam.orthographicSize = targetZoom;
     }
 
     // ---------------- CLAMP ----------------

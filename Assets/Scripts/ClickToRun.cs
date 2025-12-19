@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.InputSystem;
 
 public class ClickToRun : MonoBehaviour
@@ -10,6 +11,12 @@ public class ClickToRun : MonoBehaviour
     private bool isMoving = false;
     private CharacterSelect mySelect;
     private Camera cam;
+    public Tilemap grassTilemap;
+
+    public void Init(Tilemap grass)
+    {
+        grassTilemap = grass;
+    }
 
     void Start()
     {
@@ -47,11 +54,26 @@ public class ClickToRun : MonoBehaviour
             else
                 GetComponent<SpriteRenderer>().flipX = false;
 
-            transform.position = Vector3.MoveTowards(
+            // Calculate next position
+            Vector3 nextPos = Vector3.MoveTowards(
                 transform.position,
                 targetPosition,
                 speed * Time.deltaTime
             );
+
+            // Convert next position to tile cell
+            Vector3Int nextCell = grassTilemap.WorldToCell(nextPos);
+
+            // Stop if next step is not grass
+            if (!grassTilemap.HasTile(nextCell))
+            {
+                isMoving = false;
+                animator.Play("Idle");
+                return;
+            }
+
+            // Apply movement
+            transform.position = nextPos;
 
             if (Vector3.Distance(transform.position, targetPosition) < 0.05f)
             {

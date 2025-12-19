@@ -28,7 +28,9 @@ public class MapGenerator : MonoBehaviour
 
     private bool[,] landMap;
 
-	void Start()
+    public event System.Action OnMapGenerated;
+
+    void Start()
 	{
 		if (seed == 0)
 			seed = Random.Range(100000, 999999);
@@ -36,7 +38,8 @@ public class MapGenerator : MonoBehaviour
 		Debug.Log("Map Seed: " + seed);
 
 		GenerateMap();
-	}
+        OnMapGenerated?.Invoke();
+    }
 
 	void GenerateMap()
 	{
@@ -690,4 +693,24 @@ public class MapGenerator : MonoBehaviour
 		}
 	}
 
+    public Vector3 GetRandomGrassWorldPosition()
+    {
+        BoundsInt bounds = grassTilemap.cellBounds;
+        List<Vector3Int> grassCells = new List<Vector3Int>();
+
+        foreach (var pos in bounds.allPositionsWithin)
+        {
+            if (grassTilemap.HasTile(pos))
+                grassCells.Add(pos);
+        }
+
+        if (grassCells.Count == 0)
+        {
+            Debug.LogError("No grass tiles found!");
+            return Vector3.zero;
+        }
+
+        Vector3Int chosenCell = grassCells[Random.Range(0, grassCells.Count)];
+        return grassTilemap.GetCellCenterWorld(chosenCell);
+    }
 }
