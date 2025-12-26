@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\CharacterSpawner.cs" />
     <Compile Include="Assets\Scripts\FreeCamera2D.cs" />
     <Compile Include="Assets\Scripts\CharacterSelect.cs" />
+    <Compile Include="Assets\Scripts\GameClient.cs" />
     <Compile Include="Assets\Scripts\Utility\AsepriteJsonImporter.cs" />
     <Compile Include="Assets\Scripts\ClickToRun.cs" />
     <Compile Include="Assets\MapGenerator.cs" />
